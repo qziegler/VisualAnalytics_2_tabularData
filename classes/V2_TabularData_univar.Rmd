@@ -459,15 +459,25 @@ location=barplot(ToPlot,
          xlab = '(in %)',
          cex.names=0.6,
          cex.lab=0.6,
-         las=2,
+         las=2, #label names horizontal
          horiz = T,
          xaxt="n") # no x-axis, so I customize it below...
 
-text(x=ToPlot,y=location,labels=plotLabels,pos = 4,cex = 0.7) 
-title(sub=sourceText, adj=0,cex.sub=0.7,line = 3) 
+text(x=ToPlot,
+     y=location,
+     labels=plotLabels,
+     pos = 4, #label position
+     cex = 0.7) #label text size
+
+title(sub=sourceText, 
+      adj=0, #position of subtitle (source)
+      cex.sub=0.7, #size of text
+      line = 3) #distance from base of plot
 
 #reference line
-abline(v=25,lty=3,lwd=3)
+abline(v=25,
+       lty=3, #line type
+       lwd=3) #line width
 
 
 # customizing tick values
@@ -475,7 +485,7 @@ newXvalues<-c(0,10,25,40,50) # you just want to show this on the axis
 axis(side=1, 
      at=newXvalues, 
      labels = newXvalues,
-     cex.axis=0.8)
+     cex.axis=0.8) #size of text on axis
 
 ```
 
@@ -505,6 +515,7 @@ library(ggplot2)
 
 ```{r ggplot_base, eval=FALSE}
 #base GGPLOT2 starts with a "base", telling WHAT VARIABLES TO PLOT
+tableFreq$locale <- factor(tableFreq$locale, levels = tableFreq$locale[order(-tableFreq$pct)])
 base= ggplot(data = tableFreq, 
              aes(x = locale,
                  y = pct)) 
@@ -515,7 +526,7 @@ base= ggplot(data = tableFreq,
 
 ```{r bar_gg, eval=FALSE}
 plot1 = base + geom_bar(fill ="gray",
-                        stat = 'identity') # y is just what it is!
+                        stat = "identity") # y is just what it is!
 plot1
 ```
 
@@ -567,9 +578,10 @@ plot5
 plot6 = plot5 + geom_text(aes(y = pct ,
                             label = paste0(round(pct,2), '%')),
                         vjust=1, # if flipping 'hjust'
+                        hjust=1,
                         size = 3)
 # wanna flip the plot?
-plot6 #+ coord_flip()
+plot6 + coord_flip()
 
 ```
 
@@ -578,7 +590,7 @@ Bar plots are the default option for categorical variables. In general, you see 
 
 ```{r orderBars_base, eval=FALSE}
 ###
-ToPlotOrd=sort(ToPlot)
+ToPlotOrd=sort(ToPlot, decreasing = TRUE)
 ###
 
 par(mgp=c(1,0.5,0)) # distance label, tickText,tick
@@ -610,6 +622,7 @@ The plot above simply change the order of the _table_. If you want to do the sam
 ```{r orderFor_gg, eval=FALSE}
 tableFreq[order(-tableFreq$pct),]
 ```
+
 
 
 <span style="color:red"> Exercise:<br>Use ggplot to show a bar plot ordered by share size.</span>
