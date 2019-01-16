@@ -574,7 +574,7 @@ plot5
 
 * annotating the bars:
 
-```{r annot_gg, eval=TRUE}
+```{r annot_gg, eval=FALSE}
 plot6 = plot5 + geom_text(aes(y = pct ,
                             label = paste0(round(pct,2), '%')),
                         vjust=1, # if flipping 'hjust'
@@ -588,7 +588,7 @@ plot6 + coord_flip()
 
 Bar plots are the default option for categorical variables. In general, you see the distribution of the classification, which allows you to identify **concentration**. For that reason, ordering the bars by height can be helpful:
 
-```{r orderBars_base, eval=TRUE}
+```{r orderBars_base, eval=FALSE}
 ###
 ToPlotOrd=sort(ToPlot, decreasing = TRUE)
 ###
