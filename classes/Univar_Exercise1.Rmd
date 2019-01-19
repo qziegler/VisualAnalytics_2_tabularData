@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 <br> 
 <center><img src="http://i.imgur.com/sSaOozN.png" width="500"></center>
 
@@ -38,7 +43,7 @@ For example, when you visit the [website](https://nces.ed.gov/ccd/) of the Commo
 
 
 
-```{r getData, eval=FALSE}
+```{r getData, eval=TRUE}
 link='https://github.com/EvansDataScience/VisualAnalytics_2_tabularData/raw/master/data/eduwa.rda'
 
 #getting the data TABLE from the file in the cloud:
@@ -48,7 +53,7 @@ load(file=url(link))
 When you are in RStudio, you can view the data table by clicking on its name at the _Environment_ .
 
 It also good to know _how much_ info you have:
-```{r dataDimension, eval=FALSE}
+```{r dataDimension, eval=TRUE}
 #number of rows and columns
 dim(eduwa) #nrow(eduwa) ncol(eduwa)
 
@@ -56,7 +61,7 @@ dim(eduwa) #nrow(eduwa) ncol(eduwa)
 
 This is the list of the 24 columns:
 
-```{r column_Names, eval=FALSE}
+```{r column_Names, eval=TRUE}
 names(eduwa)
 ```
 
@@ -73,7 +78,7 @@ In this material, we will pay attention to the _univariate_ case; which is commo
 
 I can not anticipate all the questions you can try to answer via plots; but I can tell you that you are always limited by the **nature** of the variables you have at hand. Generally speaking, you have either _categorical_ or _numerical_ data in each column, and whatever question you have, you first need to know how that variable you are planing to use has been encoded, so you can plan the treatment. In R, we can know that like this:
 
-```{r dataSTR, eval=FALSE}
+```{r dataSTR, eval=TRUE}
 # this 'width = 70,strict.width='cut' means
 # you do not want to see more than 70 characters per row.
 
@@ -104,18 +109,18 @@ Categorical data are the output of the classification process. The classificatio
 
 Let's see some raw values in the variable _**LocaleType**_:
 
-```{r head, eval=FALSE}
+```{r head, eval=TRUE}
 head(eduwa$LocaleType,50) #first fifty values
 ```
 
 You can not get a clear idea of what a data table has, so a simple **frequency table** is the first tool to see what these nominal data are telling us:
 
-```{r freqTab_abs, eval=FALSE}
+```{r freqTab_abs, eval=TRUE}
 # absolute values
 table(eduwa$LocaleType,exclude = 'nothing')
 ```
 
-```{r freqTab_rel, eval=FALSE}
+```{r freqTab_rel, eval=TRUE}
 # relative values
 absoluteT=table(eduwa$LocaleType,exclude = 'nothing')
 prop.table(absoluteT)
@@ -123,7 +128,7 @@ prop.table(absoluteT)
 
 This table tells us the location of the public schools. What is the right visual for this? Sometimes the answer seems obvious, as tradition or habits give so much weight to decisions. Let's use the very well known **pie chart**:
 
-```{r pieBasic, eval=FALSE}
+```{r pieBasic, eval=TRUE}
 # the pie plots the table:
 ToPlot=prop.table(absoluteT)
 pie(ToPlot)
@@ -133,12 +138,12 @@ You should always keep it simple. Then decorate. For example, you can start impr
 
 * The purple sector does not show a label:
 
-```{r namesFre_NA, eval=FALSE}
+```{r namesFre_NA, eval=TRUE}
 names(ToPlot)
 ```
 
 We could alter the fifth label:
-```{r alterTable, eval=FALSE}
+```{r alterTable, eval=TRUE}
 names(ToPlot)[5]='Unknown'
 ```
 
@@ -146,7 +151,7 @@ names(ToPlot)[5]='Unknown'
 * Our plot did not have a title. Titles (and subtitles) are important. To give a title, it can be a *question* to be answered by the plot:
 
 
-```{r pieTitle_question, eval=FALSE}
+```{r pieTitle_question, eval=TRUE}
 # the pie plots the table:
 titleText='Where are Public Schools located in WA in 2019?'
 sourceText='Source: US Department of Education'
@@ -158,7 +163,7 @@ pie(ToPlot,
 
 The title can *guide* the reader to recognise the purpose of your plot:
 
-```{r pieTitle_guide, eval=FALSE}
+```{r pieTitle_guide, eval=TRUE}
 # the pie plots the table:
 titleText2='WA still has schools locations unknown \n (info from 2018)'
 
@@ -170,7 +175,7 @@ pie(ToPlot,
 
 The title can also *suggest* the decision:
 
-```{r pieTitle_suggestion, eval=FALSE}
+```{r pieTitle_suggestion, eval=TRUE}
 # the pie plots the table:
 titleText3='WA needs to fully categorize school locations\n(info from 2018)'
 
@@ -188,13 +193,13 @@ Let's do more customization:
 
 * You can use the values as labels. If values between [0,1]  represent shares, it is better to use a [0,100] scale (in %).
 
-```{r 100convert, eval=FALSE}
+```{r 100convert, eval=TRUE}
 ToPlot*100
 ```
 
 * You can customize the colors:
 
-```{r rainbowColor, eval=FALSE}
+```{r rainbowColor, eval=TRUE}
 # details:
 ToPlot=ToPlot*100 # preparing labels
 paletteHere=rainbow(length(ToPlot)) # customizing set of colors
@@ -210,13 +215,13 @@ pie(x=ToPlot,#table
 
 
 The labels need better work:
-```{r percentExample, eval=FALSE}
+```{r percentExample, eval=TRUE}
 paste0(round(ToPlot,2),'%')
 ```
 
 Then,
 
-```{r labelPercent, eval=FALSE}
+```{r labelPercent, eval=TRUE}
 plotLabels=paste0(round(ToPlot,2),'%') # labels for the slices
 # plotting
 pie(x=ToPlot,#table
@@ -227,7 +232,7 @@ pie(x=ToPlot,#table
 ```
 
 * You may need to use legends, but considering its cluttering effects:
-```{r legendPie1, eval=FALSE}
+```{r legendPie1, eval=TRUE}
 # plotting
 pie(x=ToPlot,#table
     col = paletteHere, 
@@ -241,7 +246,7 @@ legend(x="right", #where
 ```
 
 Most  legends need customization:
-```{r legendPie2, eval=FALSE}
+```{r legendPie2, eval=TRUE}
 # MANAGING THE LEGEND:
 
 pie(x=ToPlot,#table
@@ -261,7 +266,7 @@ legend(x="right", #where
 
 Most people tend to use pie charts with categorical data, but this **should not** be the default option to visualize classification (see this [discussion](https://medium.com/geckoboard-under-the-hood/think-before-you-pie-chart-and-more-effective-ways-to-visualize-your-data-862ea3456b26)). Following the advice from the [video](https://www.youtube.com/watch?v=axx_MYb8-SI) in that post, we should turn our pie into a **bar chart**. Let me do it with the same info I used to build the pie:
 
-```{r barplot1, eval=FALSE}
+```{r barplot1, eval=TRUE}
 
 # barplot plots the table too
 
@@ -275,7 +280,7 @@ We saved some space as no legend was needed (the less **ink** the better visual)
 
 A very important thing to consider is that axes represent some unit of measurement, so make sure that unit is shown:
 
-```{r barplot2, eval=FALSE}
+```{r barplot2, eval=TRUE}
 paletteHereNew=c('gray') # just one color
 # plotting
 barplot(ToPlot,
@@ -291,7 +296,7 @@ barplot(ToPlot,
 
 If you consider **annotating** the plot, you can use the labels we used before:
 
-```{r barplotAnnot, eval=FALSE}
+```{r barplotAnnot, eval=TRUE}
 # plotting
 location=barplot(ToPlot,
      col = paletteHereNew,
@@ -312,7 +317,7 @@ text(x=location,y=ToPlot,labels=plotLabels,
 You may decide to change the **orientation** of the plot:
 
 
-```{r flipBarplot, eval=FALSE}
+```{r flipBarplot, eval=TRUE}
 # plotting
 location=barplot(ToPlot,
      col = paletteHereNew,
@@ -331,7 +336,7 @@ text(x=location,y=ToPlot,labels=plotLabels,
 
 The problem above is that changing the orientation, changes the axes. Then, we need to do more work:
 
-```{r flipBarplot2, eval=FALSE}
+```{r flipBarplot2, eval=TRUE}
 location=barplot(ToPlot,
          col = paletteHereNew,
          border=NA,
@@ -349,7 +354,7 @@ text(x=ToPlot,y=location, #change of x and y
 
 A little more work on the categories names:
 
-```{r categoryNames, eval=FALSE}
+```{r categoryNames, eval=TRUE}
 location=barplot(ToPlot,
          col = paletteHereNew,
          border=NA,
@@ -369,7 +374,7 @@ We made the right changes, but some things do not look well. It would be better 
 
 * The subtitle (_source_) and the label of the x-axis were not that close. A good step will be to have the subtitle as an element of its own, which allows, for instance, to decide its alignment and size:
 
-```{r barSubtitle, eval=FALSE}
+```{r barSubtitle, eval=TRUE}
 location=barplot(ToPlot,
          col = paletteHereNew,
          border=NA,
@@ -390,7 +395,7 @@ title(sub=sourceText,
 
 * To have the label of the x-axis closer to the axis itself, we need to alter the _graphical parameters_:
 
-```{r mgp_Barplot, eval=FALSE}
+```{r mgp_Barplot, eval=TRUE}
 # changing parameters
 # (distanceOfUnit To plot, 
 # distanceOfAxislabels to plot,
@@ -418,7 +423,7 @@ title(sub=sourceText, adj=0,cex.sub=0.7,
 
 * It is generally a good idea to add a **reference line**, which can represent an expected value or another relevant value. Since I have four different locations (not considering the missing ones), let me put a line to signal the 25% (uniform share among four locations):
 
-```{r refLine_bar, eval=FALSE}
+```{r refLine_bar, eval=TRUE}
 
 titleText2='Are all locations getting a fair share of public schools in WA?'
 
@@ -448,7 +453,7 @@ abline(v=25,#position vertical
 
 Again, adding another element requires adjusting what we had. What about writing your own axis-values and reducing the bar annotations:
 
-```{r lastPlot_bar, eval=FALSE}
+```{r lastPlot_bar, eval=TRUE}
 
 par(mgp=c(1,0.5,0)) 
 location=barplot(ToPlot,
@@ -496,7 +501,7 @@ There are alternative libraries, like **ggplot2**, that are also frequently used
 
 * Avoid missing values and prepare frequency table. We replaced the missing values (now they are 'Unknown'). Here, you need to transform the _table_ into a **data frame**:
 
-```{r ggplot1, eval=FALSE}
+```{r ggplot1, eval=TRUE}
 
 tableFreq=as.data.frame(ToPlot)
 names(tableFreq)=c("locale","pct")
@@ -513,7 +518,7 @@ library(ggplot2)
 
 * Create the base _object_, which is not a plot, just informing the main variables:
 
-```{r ggplot_base, eval=FALSE}
+```{r ggplot_base, eval=TRUE}
 #base GGPLOT2 starts with a "base", telling WHAT VARIABLES TO PLOT
 tableFreq$locale <- factor(tableFreq$locale, levels = tableFreq$locale[order(-tableFreq$pct)])
 base= ggplot(data = tableFreq, 
@@ -524,7 +529,7 @@ base= ggplot(data = tableFreq,
 
 * On top of the previous object, add the layer that produces the main plots (the next layers will add or customize elements in the plot):
 
-```{r bar_gg, eval=FALSE}
+```{r bar_gg, eval=TRUE}
 plot1 = base + geom_bar(fill ="gray",
                         stat = "identity") # y is just what it is!
 plot1
@@ -532,7 +537,7 @@ plot1
 
 * We can now pay attention to the titles:
 
-```{r title_gg, eval=FALSE}
+```{r title_gg, eval=TRUE}
 plot2 = plot1 + labs(title=titleText2,
                      x =NULL, 
                      y = NULL,
@@ -543,7 +548,7 @@ plot2
 
 * Add the reference lines:
 
-```{r refl_gg, eval=FALSE}
+```{r refl_gg, eval=TRUE}
 plot3 = plot2 + geom_hline(yintercept = 25, #where
                            linetype="dashed", 
                            size=1.5, #thickness
@@ -553,7 +558,7 @@ plot3
 
 * Customize the axes:
 
-```{r units_gg, eval=FALSE}
+```{r units_gg, eval=TRUE}
 library(scales)
 
 # customize Y axis
@@ -564,7 +569,7 @@ plot4
 ```
 
 * Less ink and title/subtitle positions:
-```{r title2_gg, eval=FALSE}
+```{r title2_gg, eval=TRUE}
 plot5 = plot4 + theme(panel.background = element_rect(fill = "white",
                                                     colour = "grey50"),
                     plot.caption = element_text(hjust = 0), # default was 1
@@ -574,11 +579,11 @@ plot5
 
 * annotating the bars:
 
-```{r annot_gg, eval=FALSE}
+```{r annot_gg, eval=TRUE}
 plot6 = plot5 + geom_text(aes(y = pct ,
                             label = paste0(round(pct,2), '%')),
                         vjust=1, # if flipping 'hjust'
-                        hjust=1,
+                        hjust=-0.25,
                         size = 3)
 # wanna flip the plot?
 plot6 + coord_flip()
@@ -588,9 +593,10 @@ plot6 + coord_flip()
 
 Bar plots are the default option for categorical variables. In general, you see the distribution of the classification, which allows you to identify **concentration**. For that reason, ordering the bars by height can be helpful:
 
-```{r orderBars_base, eval=FALSE}
+```{r orderBars_base, eval=TRUE}
 ###
 ToPlotOrd=sort(ToPlot, decreasing = TRUE)
+plotLabels=paste0(round(ToPlotOrd,2),'%') # labels for the slices
 ###
 
 par(mgp=c(1,0.5,0)) # distance label, tickText,tick
@@ -601,11 +607,12 @@ location=barplot(ToPlotOrd,
          xlim=c(0,50), 
          xlab = '(in %)',
          horiz = T,
+         las = 2,
          cex.names = 0.7,
          cex.lab=0.6,
          xaxt="n") # no x-axis, so I customize it below...
 
-text(x=ToPlotOrd,y=location,labels=plotLabels,pos = 2,cex = 0.7) 
+text(x=ToPlotOrd,y=location,labels=plotLabels,pos = 4,cex = 0.7) 
 title(sub=sourceText, adj=0,cex.sub=0.7,line = 3) 
 
 # reference line
@@ -619,7 +626,7 @@ axis(side=1, at=xtick, labels = xtick,cex.axis=0.8)
 
 The plot above simply change the order of the _table_. If you want to do the same with _ggplot_ you should try the command:
 
-```{r orderFor_gg, eval=FALSE}
+```{r orderFor_gg, eval=TRUE}
 tableFreq[order(-tableFreq$pct),]
 ```
 
