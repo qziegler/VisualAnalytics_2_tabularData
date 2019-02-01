@@ -1,0 +1,292 @@
+Quinn Ziegler - Univariate Exercises 3
+
+```{r getData, eval=TRUE}
+link='https://github.com/EvansDataScience/VisualAnalytics_2_tabularData/raw/master/data/eduwa.rda'
+
+#getting the data TABLE from the file in the cloud:
+load(file=url(link))
+```
+
+```{r dataDimension, eval=TRUE}
+#number of rows and columns
+dim(eduwa) #nrow(eduwa) ncol(eduwa)
+
+```
+
+This is the list of the 24 columns:
+
+```{r column_Names, eval=TRUE}
+names(eduwa)
+```
+
+
+```{r ordinalTable, eval=TRUE}
+table(eduwa$High.Grade,exclude = 'nothing')
+```
+
+
+```{r boxplot_gg, eval=TRUE}
+library(ggplot2)
+# boxplots do not use frequency tables
+
+# as.numeric produces turns levels of the factor into numbers
+box1 = ggplot(eduwa, aes(y=as.numeric(High.Grade))) 
+box1 = box1 + geom_boxplot() + coord_flip() # to show it horizontally
+
+box1
+```
+
+
+```{r boxplot_axis_labels, eval=TRUE}
+# the labels use the original ordinal levels
+ordLabels= levels(eduwa$High.Grade)
+
+box2 = box1 + scale_y_continuous(labels=ordLabels,breaks=1:15)
+box2
+```
+
+Box plots have important statistical information. The beginning and the ending of the box indicates the first (q1) and the third quantile (q75); and the thicker line in the middle represents the median. All those values are clearly visible, but we can retrieve the values like this:
+
+```{r box_quarts, eval=TRUE}
+#get positions
+# using 'ggplot_build'
+pos_q1=     ggplot_build(box2)$data[[1]]$lower
+pos_median= ggplot_build(box2)$data[[1]]$middle
+pos_q3=     ggplot_build(box2)$data[[1]]$upper
+
+# using
+levels(eduwa$High.Grade)[c(pos_q1,pos_median,pos_q3)]
+```
+
+From the information retrieved, we know:
+
+* 25% of the public Schools offer at most 5th GRADE. 
+* 50% of the public Schools offer at most 8th GRADE.
+* 75% of the public Schools offer at most 12th GRADE. Also, 25% of the schools offer at least 12th grade.
+
+We can find these results with a _detailed_ frequency table; that is, instead of using the command _table_ as we did before, we could try a more advanced function:
+
+```{r advancedTable, warning=FALSE,results='asis', eval=TRUE}
+library(summarytools)
+freq(eduwa$High.Grade,style = 'rmarkdown')
+```
+
+
+
+<span style="color:red"> Exercise:<br> Make sure our box plot follows the same design approach and include all the elements as in the bar plot for nominal data.
+</span>
+
+```{r}
+box3 = box2 + labs(title = "50% of schools in Washington state offer at most 8th grade", 
+                   y = "Highest Grade Offered",
+                   caption = "Source: US Department of Education") +
+            theme(panel.background = element_rect(fill = "white", colour = "grey50")) +
+            theme(axis.text.y = element_blank()) +
+            theme(axis.ticks.y = element_blank())
+
+box4 = box3 + theme(plot.title = element_text(size = 12, face = "bold"),
+                    axis.text.x = element_text(size = 8),
+                    axis.title.x = element_text(size = 10, vjust = -2),
+                    plot.caption = element_text(hjust = 0, vjust = -1)) 
+
+box4
+```
+
+
+
+### Counting
+
+<span style="color:red"> Exercise:<br> Make a histogram for the variable  FREE LUNCH, and make sure it has all the right elements, and get rid of unnecessary elements.
+</span>
+
+```{r, eval=TRUE}
+summary(eduwa$Free.Lunch)
+```
+
+```{r, eval=TRUE}
+eduwaFL <- eduwa[complete.cases(eduwa$Free.Lunch),]
+datahistFL <- hist(eduwa$Free.Lunch)
+```
+
+```{r, eval=TRUE}
+baseFL = ggplot(eduwaFL, aes(x = Free.Lunch))
+histFL = baseFL + geom_histogram(binwidth = 50, boundary = 0, fill = "lightblue", color = "grey50")
+histFL = histFL + stat_bin(binwidth = 50, aes(label=..count..), 
+                  geom = "text",boundary = 0,vjust=-1, size = 2)
+
+histFL
+```
+
+```{r, eval=TRUE}
+titleFL2 = "Very few schools in Washington state have more than 500 students \nreceiving free lunch"
+
+histFL2 = histFL + labs(title = titleFL2, 
+                        x = "Students Receiving Free Lunch",
+                        y = "Number of Schools",
+                        caption = "Source: US Department of Education")
+
+histFL3 = histFL2 + theme(panel.background = element_rect(fill = "white", colour = "grey50"),
+                          plot.title = element_text(size = 12, face = "bold"),
+                          axis.title = element_text(size = 10),
+                          axis.text = element_text(size = 8),
+                          plot.caption = element_text(hjust = 0),
+                          axis.title.x = element_text(vjust = -1),
+                          axis.title.y = element_text(vjust = 2))
+
+histFL4 = histFL3 + scale_x_continuous(breaks = c(0,250,500,750,1000,1250,1500,1750), limits = c(0,2000)) +
+                    scale_y_continuous(breaks = c(0,100,200,300,400,500,600), limits = c(0,600))
+
+histFL4
+```
+
+
+
+
+### Measurement
+
+```{r removeMissing2, eval=TRUE}
+# strategy 2: 
+eduwa4=eduwa[complete.cases(eduwa$Student.Teacher.Ratio),]
+
+tapply(eduwa4$Student.Teacher.Ratio, 
+       eduwa4$County, 
+       mean)
+```
+
+
+```{r histMeans, eval=TRUE}
+# keeping strategy 2: 
+meanValues=tapply(eduwa4$Student.Teacher.Ratio, 
+                  eduwa4$County, 
+                  mean)
+```
+
+
+```{r summaryMeans, eval=TRUE}
+summary(meanValues)
+```
+
+
+<span style="color:red"> Exercise:<br> Do some research and make a histogram and a density plot using ggplot for the variable we just used above.
+</span>
+
+```{r, eval=TRUE}
+stratiodf <- as.data.frame(meanValues)
+stratiodf$county <- rownames(stratiodf)
+rownames(stratiodf) <- NULL
+head(stratiodf)
+
+summary(stratiodf$meanValues)
+```
+
+
+```{r, eval=TRUE}
+meanST <- mean(stratiodf$meanValues)
+meanST
+```
+
+
+```{r}
+baseST = ggplot(stratiodf, aes(x = meanValues))
+histST = baseST + geom_histogram(binwidth = 2, boundary = 0, fill = "white", color = "grey50")
+histST = histST + stat_bin(binwidth = 2, aes(label=..count..), 
+                  geom = "text",boundary = 0,vjust=-0.5, size = 3)
+
+histST
+```
+
+```{r, eval=TRUE}
+titleST2 = "Washington state counties have an average student-teacher ratio approximately equal \nto 18 students per teacher"
+
+histST2 = histST + labs(title = titleST2, 
+                        x = "Average Student-Teacher Ratio",
+                        y = "Number of Counties",
+                        caption = "Source: US Department of Education")
+
+histST3 = histST2 + theme(panel.background = element_rect(fill = "white", colour = "grey50"),
+                          plot.title = element_text(size = 12, face = "bold"),
+                          axis.title = element_text(size = 10),
+                          axis.text = element_text(size = 8),
+                          plot.caption = element_text(hjust = 0),
+                          axis.title.x = element_text(vjust = -1),
+                          axis.title.y = element_text(vjust = 2))
+
+histST4 = histST3 + scale_x_continuous(breaks = c(10,12,14,16,18,20,22,24), limits = c(10,24)) +
+                    scale_y_continuous(breaks = c(0,5,10,15,20), limits = c(0,20))
+
+histST5 = histST4 + geom_vline(aes(xintercept = mean(stratiodf$meanValues), color="mean"), 
+                               size = 1, linetype = "dashed")
+
+histST6 = histST5 + theme(legend.title = element_blank()) +
+                    scale_color_manual(labels = c("Mean"), values = c("blue"))
+
+histST6
+
+```
+
+
+```{r, eval=TRUE}
+
+baseSTden <- ggplot(stratiodf, aes(x = meanValues))
+
+denST <- baseSTden + geom_density()
+
+denST
+
+```
+
+
+```{r, eval=TRUE}
+titleden = "Washington state counties have an average student-teacher ratio approximately \nequal to 18 students per teacher"
+
+denST2 = denST + labs(title = titleden, 
+                        x = "Average Student-Teacher Ratio",
+                        y = "Number of Counties",
+                        caption = "Source: US Department of Education")
+
+denST3 = denST2 + theme(panel.background = element_rect(fill = "white", colour = "grey50"),
+                          plot.title = element_text(size = 12, face = "bold"),
+                          axis.title = element_text(size = 10),
+                          axis.text = element_text(size = 8),
+                          plot.caption = element_text(hjust = 0, vjust = -2),
+                          axis.title.x = element_text(vjust = -1),
+                          axis.title.y = element_text(vjust = 2))
+
+denST4 = denST3 + scale_x_continuous(breaks = c(8,10,12,14,16,18,20,22,24,26), limits = c(8,26))
+
+denST5 = denST4 + geom_vline(aes(xintercept = mean(stratiodf$meanValues), color="mean"), 
+                               size = 1, linetype = "dashed") +
+                  geom_vline(aes(xintercept = median(stratiodf$meanValues), color="median"),
+                               size = 1, linetype = "dashed", show.legend = TRUE)
+
+denST6 = denST5 + theme(legend.title = element_blank()) +
+                  scale_color_manual(labels = c("Mean", "Median"), values = c("blue", "red"))
+
+denST6
+```
+
+
+```{r, eval=TRUE}
+boxST = ggplot(stratiodf, aes(y=meanValues, z="Test")) 
+
+boxST = boxST + geom_boxplot() + coord_flip() + scale_y_continuous(breaks = c(10,15,20,25),
+                                                                   limits = c(10,25))
+
+boxST2 = boxST + labs(title = "Two counties have a student-teacher ratio well below the state average", 
+                   y = "Average Student-Teacher Ratio",
+                   caption = "Source: US Department of Education") +
+                   theme(panel.background = element_rect(fill = "white", colour = "grey50")) +
+                   theme(axis.text.y = element_blank()) +
+                   theme(axis.ticks.y = element_blank()) +
+                   theme(axis.title.y = element_blank())
+
+boxST3 = boxST2 + theme(plot.title = element_text(size = 12, face = "bold"),
+                    axis.text.x = element_text(size = 8),
+                    axis.title.x = element_text(size = 10),
+                    plot.caption = element_text(hjust = 0, vjust = -1)) 
+
+boxST4 = boxST3 + annotate("text", x = -0.1, y = 11.5, label = "Outliers are: \nColumbia and Lincoln", size = 3)
+
+boxST4
+```
+
